@@ -1,0 +1,7 @@
+﻿EmployeeID,Last_Name,First_name,Soc_Sec,Date_of_Birth,Salary,departmentid
+E101,Smith,Joe,111-22-3344,1972/5/3,43860,1
+E102,Green,Mary,333-11-2222,1968/12/4,43575,2
+E103,Jones,Ed,777-66-5555,1971/1/9,42000,3
+E104,Smith,Sally,661-61-6161,1973/8/19,57750,3
+E105,Brown,Howard,777-88-9999,1976/8/12,45900,1
+E106,Foster,Jane,222-22-2222,1972/1/1,35000,4

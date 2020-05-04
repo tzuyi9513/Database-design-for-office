@@ -1,0 +1,8 @@
+﻿StudentID,Name,Grade,Major,Student_TutorID
+S101,Bill,92,CIS,
+S102,Alex,88,Finance,S101
+S103,Mary,95,CIS,S101
+S104,Liz,87,Management,S103
+S105,Ed,82,Marketing,S103
+S106,Sue,94,Finance,S101
+S107,Petra,86,Marketing,S106
