@@ -130,3 +130,161 @@ SELECT t.name, COUNT(s.student_tutorid) AS num_tutored
 FROM students s, students t
 WHERE s.student_tutorid = t.studentid
 GROUP BY t.name) AS a;
+
+
+
+/*
+Who has the highest salary at the company?
+*/
+
+SELECT first_name, Last_name, Salary
+FROM employee
+WHERE salary = 
+(select MAX(salary) FROM employee);
+
+
+
+/*
+Who has the highest paid salary in New York ?
+*/
+
+SELECT top 1 e.first_name, e.last_name, d.department_location, salary
+FROM employee e
+INNER JOIN department d 
+ON e.departmentid = d.departmentid
+WHERE d.department_location = "NY"
+ORDER BY salary DESC;
+
+
+
+/*
+Which employees make more than the average salary?
+*/
+
+SELECT first_name, last_name, salary
+FROM employee 
+WHERE salary > (SELECT AVG(salary) FROM employee);
+
+
+
+/*
+For each project show 
+Total employee working on the project
+the total number of hours spent on the project per week
+*/
+
+SELECT project_number, count(employeeid),sum(hours_per_week)
+FROM project_assignment
+GROUP BY project_number;
+
+
+
+/*
+For each employee,
+show the total number of projects
+and also total numbers of hours spent on the projects
+*/
+
+SELECT employeeid, COUNT(project_number), sum(hours_per_week)
+FROM project_assignment
+GROUP BY employeeid;
+
+
+
+/*
+Show all of the project and department information for all projects.
+*/
+
+SELECT p.*, d.*
+FROM project p, department d
+WHERE p.departmentid = d.departmentid;
+
+
+
+/*
+Show all of the project and department information for all projects except where the project and department are in two different locations.
+*/
+
+SELECT p.*, d.*
+FROM project p
+INNER JOIN department d ON p.departmentid = d.departmentid
+WHERE p.project_location <>d.department_location;
+
+
+
+/*
+Show all of the projects name and their total hours worked per week.
+*/
+
+SELECT p.project_name,  SUM(hours_per_week)
+FROM project p
+INNER JOIN project_assignment a ON p.project_id = a.project_number
+GROUP BY p.project_name;
+
+
+
+/*
+Show the projects and the total hours worked per week only for those projects totalling more than 30 hours per week.
+*/
+
+SELECT p.project_name,  SUM(hours_per_week)
+FROM project p
+INNER JOIN project_assignment a ON p.project_id = a.project_number
+GROUP BY p.project_name
+having SUM(a.hours_per_week)>30;
+
+
+
+/*
+Show the project and the total hours worked per week only for the project with the most total hours
+*/
+
+SELECT top 1 p.project_name,  SUM(hours_per_week)
+FROM project p
+INNER JOIN project_assignment a ON p.project_id = a.project_number
+GROUP BY p.project_name
+ORDER BY sum(hours_per_week) DESC;
+
+
+
+/*
+Show each employee and project including the number of hours they work on each project.
+*/
+
+SELECT first_name, last_name, project_name, hours_per_week
+FROM (employee e INNER JOIN project_assignment pa
+ON e.employeeid = pa.employeeid) INNER JOIN project p
+ON pa.project_number = p.project_id;
+
+
+
+/*
+Show name of the department with the largest total salary and its total salary.
+*/
+
+SELECT department_name, SUM(salary)
+FROM employee e, department d
+WHERE e.departmentid = d.departmentid
+GROUP BY department_name
+HAVING SUM(salary) 
+= (
+SELECT MAX(totalsalary)
+FROM (SELECT department_name, SUM(salary) AS totalsalary
+FROM employee e, department d
+WHERE e.departmentid = d.departmentid
+GROUP BY department_name)
+);
+
+
+
+/*
+Show maximum number of people one person is tutoring
+*/
+
+SELECT top 1 t.name, a.num_tutored
+FROM (
+SELECT t.name, COUNT(s.student_tutorid) AS num_tutored
+FROM students s, students t
+WHERE s.student_tutorid = t.studentid
+GROUP BY t.name) AS a
+ORDER BY a.num_tutored DESC;
