@@ -288,3 +288,92 @@ FROM students s, students t
 WHERE s.student_tutorid = t.studentid
 GROUP BY t.name) AS a
 ORDER BY a.num_tutored DESC;
+
+
+
+/*
+Which department name has combined payroll of more than $85,000?
+*/
+
+SELECT department_name, totalsalary FROM
+(SELECT department_name, sum(salary) AS totalsalary
+FROM employee e, department d
+WHERE e.departmentid = d.departmentid
+GROUP BY department_name)
+WHERE totalsalary > 85000;
+
+
+
+/*
+Show the employees name that contribute to projects that  are worked on more than 30 hours per week
+*/
+
+SELECT e.last_name, e.first_name, pw.total_hours
+FROM
+(SELECT project_number, SUM(hours_per_week) AS total_hours
+FROM project_assignment
+Group BY project_number
+having sum(hours_per_week) > 30) pw,
+employee e, project_assignment pa
+WHERE pw.project_number = pa.project_number
+AND pa.employeeid = e.employeeid;
+
+
+
+/*
+Who is the highest paid employee?
+*/
+
+/* Solution 1: using top 1 */
+SELECT top 1 First_name,last_name
+FROM employee
+ORDER BY salary DESC;
+
+/* Solution 2: using NOT EXISTS */
+SELECT e1.First_name, e1.last_name
+FROM employee e1
+WHERE NOT EXISTS (
+SELECT *
+FROM employee e2
+WHERE e1.salary < e2.salary
+);
+
+
+/*
+Show all of the employees except the highest paid.
+*/
+
+SELECT First_name, last_name
+FROM  employee
+WHERE salary NOT IN
+(SELECT top 1 salary
+FROM employee
+ORDER BY salary DESC);
+
+
+
+/*
+Which employee (names) has the highest working hours on a project?
+*/
+
+/* Solution 1: using sub-query */
+SELECT e.Last_name, e.first_name
+FROM employee e, project_assignment pa
+WHERE e.employeeid = pa.employeeid
+AND pa.hours_per_week =
+(SELECT top 1 hours_per_week
+FROM project_assignment
+ORDER BY hours_per_week DESC);
+
+/* solution 2: using NOT EXISTS */
+
+SELECT e1.first_name, e1.last_name, pa.hours_per_week
+FROM employee e1, project_assignment pa
+WHERE e1.employeeid = pa.employeeid AND
+NOT EXISTS (
+SELECT employeeid, hours_per_week
+FROM project_assignment pa1
+WHERE pa.hours_per_week < pa1.hours_per_week)
+AND pa.hours_per_week is NOT NULL;
+
+
