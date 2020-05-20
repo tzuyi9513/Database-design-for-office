@@ -13,7 +13,7 @@ Give everyone in department 1 a 2% raise.
 */
 
 UPDATE employee
-SET salary =salary * 1.02
+SET salary = salary * 1.02
 WHERE departmentid = 1;
 
 
